@@ -1,8 +1,8 @@
 {
     "name": "serverless-dynamodb-client",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
-        "node": ">=4.0"
+        "node": ">=6.4"
     },
     "description": "Serverless dynamodb client plugin",
     "author": "99xtechnology.com",
