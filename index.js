@@ -1,21 +1,25 @@
 const AWS = require('aws-sdk');
 
-class SwitchDynamoDB {
-    constructor () {
-        this.offlineOptions = {
+class RawClientWrapper extends AWS.DynamoDB {
+    constructor(params) {
+        offlineOptions = {
             region: "localhost",
             endpoint: "http://localhost:8000"
         };
-        this.options = process.env.IS_OFFLINE ? this.offlineOptions : {};
-    }
-
-    DocumentClient(params) {
-        new AWS.DynamoDB.DocumentClient(this.options, ...params)
-    }
-
-    RawClient(params) {
-        new AWS.DynamoDB(this.options, ...params)
+        options = process.env.IS_OFFLINE ? offlineOptions : {};
+        super(options, ...params);
     }
 }
 
-module.exports = SwitchDynamoDB;
+class DocumentClientWrapper extends AWS.DynamoDB.DocumentClient {
+    constructor(params) {
+        offlineOptions = {
+            region: "localhost",
+            endpoint: "http://localhost:8000"
+        };
+        options = process.env.IS_OFFLINE ? offlineOptions : {};
+        super(options, ...params);
+    }
+}
+
+module.exports = [RawClientWrapper, DocumentClientWrapper];
