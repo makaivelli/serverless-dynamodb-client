@@ -1,16 +1,21 @@
-var AWS = require('aws-sdk'),
-    options = {
-        region: "localhost",
-        endpoint: "http://localhost:8000"
-    };
+const AWS = require('aws-sdk');
 
-var isOffline = function () {
-    // Depends on serverless-offline plugion which adds IS_OFFLINE to process.env when running offline
-    return process.env.IS_OFFLINE;
-};
+class SwitchDynamoDB {
+    constructor () {
+        this.offlineOptions = {
+            region: "localhost",
+            endpoint: "http://localhost:8000"
+        };
+        this.options = process.env.IS_OFFLINE ? this.offlineOptions : {};
+    }
 
-var dynamodb = {
-    doc: isOffline() ? new AWS.DynamoDB.DocumentClient(options) : new AWS.DynamoDB.DocumentClient(),
-    raw: isOffline() ? new AWS.DynamoDB(options) : new AWS.DynamoDB()
-};
-module.exports = dynamodb;
+    DocumentClient(params) {
+        new AWS.DynamoDB.DocumentClient(this.options, ...params)
+    }
+
+    RawClient(params) {
+        new AWS.DynamoDB(this.options, ...params)
+    }
+}
+
+module.exports = SwitchDynamoDB;
