@@ -1,5 +1,5 @@
 var AWS = require('aws-sdk'),
-    options = {
+    localOptions = {
         region: "localhost",
         endpoint: "http://localhost:8000"
     };
@@ -9,8 +9,9 @@ var isOffline = function () {
     return process.env.IS_OFFLINE;
 };
 
-var dynamodb = {
-    doc: isOffline() ? new AWS.DynamoDB.DocumentClient(options) : new AWS.DynamoDB.DocumentClient(),
-    raw: isOffline() ? new AWS.DynamoDB(options) : new AWS.DynamoDB()
+var dynamodb = function (customOptions) {
+    var options = isOffline() ? localOptions : Object.assign({}, localOptions, customOptions);
+    var doc = new AWS.DynamoDB.DocumentClient(options);
+    var raw = new AWS.DynamoDB(options);
 };
 module.exports = dynamodb;
